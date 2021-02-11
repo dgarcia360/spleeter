@@ -13,9 +13,10 @@
     ```
 """
 
+import sys
 from abc import ABC, abstractmethod
 from os import environ, makedirs
-from os.path import exists, isabs, join, sep
+from os.path import exists, isabs, join, sep, abspath
 
 __email__ = "spleeter@deezer.com"
 __author__ = "Deezer Research"
@@ -27,8 +28,13 @@ class ModelProvider(ABC):
     A ModelProvider manages model files on disk and
     file download is not available.
     """
-
-    DEFAULT_MODEL_PATH: str = environ.get("MODEL_PATH", "pretrained_models")
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS        
+        base_path = sys._MEIPASS
+    except Exception:    
+        base_path = abspath(".")    
+    
+    DEFAULT_MODEL_PATH = join(base_path, 'pretrained_models')
     MODEL_PROBE_PATH: str = ".probe"
 
     @abstractmethod
