@@ -2,7 +2,8 @@
 # coding: utf8
 
 """ AudioAdapter class defintion. """
-
+import sys
+from os.path import abspath
 from abc import ABC, abstractmethod
 from importlib import import_module
 from pathlib import Path
@@ -167,6 +168,13 @@ class AudioAdapter(ABC):
             AudioAdapter:
                 Default adapter instance to use.
         """
+        try:
+            base_path = sys._MEIPASS
+        except Exception:  
+            base_path = abspath(".")
+        os.environ['FFMPEG_PATH'] = base_path + '/ffmpeg'
+        os.environ['FFPROBE_PATH'] = base_path + '/ffprobe'  
+
         if cls._DEFAULT is None:
             from .ffmpeg import FFMPEGProcessAudioAdapter
 
