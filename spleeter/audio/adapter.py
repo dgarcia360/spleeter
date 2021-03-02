@@ -3,6 +3,7 @@
 
 """ AudioAdapter class defintion. """
 import sys
+import os
 from os.path import abspath
 from abc import ABC, abstractmethod
 from importlib import import_module
