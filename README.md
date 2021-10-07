@@ -1,6 +1,6 @@
 <img src="https://github.com/deezer/spleeter/raw/master/images/spleeter_logo.png" height="80" />
 
-[![Github actions](https://github.com/deezer/spleeter/workflows/pytest/badge.svg)](https://github.com/deezer/spleeter/actions) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/spleeter) [![PyPI version](https://badge.fury.io/py/spleeter.svg)](https://badge.fury.io/py/spleeter) [![Conda](https://img.shields.io/conda/vn/conda-forge/spleeter)](https://anaconda.org/conda-forge/spleeter) [![Docker Pulls](https://img.shields.io/docker/pulls/researchdeezer/spleeter)](https://hub.docker.com/r/researchdeezer/spleeter) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/deezer/spleeter/blob/master/spleeter.ipynb) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/spleeter/community) [![status](https://joss.theoj.org/papers/259e5efe669945a343bad6eccb89018b/status.svg)](https://joss.theoj.org/papers/259e5efe669945a343bad6eccb89018b)
+[![Github actions](https://github.com/deezer/spleeter/workflows/pytest/badge.svg)](https://github.com/deezer/spleeter/actions) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/spleeter) [![PyPI version](https://badge.fury.io/py/spleeter.svg)](https://badge.fury.io/py/spleeter) [![Conda](https://img.shields.io/conda/vn/deezer-research/spleeter)](https://anaconda.org/deezer-research/spleeter) [![Docker Pulls](https://img.shields.io/docker/pulls/deezer/spleeter)](https://hub.docker.com/deezer/spleeter) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/deezer/spleeter/blob/master/spleeter.ipynb) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/spleeter/community) [![status](https://joss.theoj.org/papers/259e5efe669945a343bad6eccb89018b/status.svg)](https://joss.theoj.org/papers/259e5efe669945a343bad6eccb89018b)
 
 > :warning: [Spleeter 2.1.0](https://pypi.org/project/spleeter/) release introduces some breaking changes, including new CLI option naming for input, and the drop
 > of dedicated GPU package. Please read [CHANGELOG](CHANGELOG.md) for more details.
@@ -19,8 +19,7 @@ already trained state of the art model for performing various flavour of separat
 2 stems and 4 stems models have [high performances](https://github.com/deezer/spleeter/wiki/Separation-Performances) on the [musdb](https://sigsep.github.io/datasets/musdb.html) dataset. **Spleeter** is also very fast as it can perform separation of audio files to 4 stems 100x faster than real-time when run on a GPU.
 
 We designed **Spleeter** so you can use it straight from [command line](https://github.com/deezer/spleeter/wiki/2.-Getting-started#usage)
-as well as directly in your own development pipeline as a [Python library](https://github.com/deezer/spleeter/wiki/4.-API-Reference#separator). It can be installed with [Conda](https://github.com/deezer/spleeter/wiki/1.-Installation#using-conda),
-with [pip](https://github.com/deezer/spleeter/wiki/1.-Installation#using-pip) or be used with
+as well as directly in your own development pipeline as a [Python library](https://github.com/deezer/spleeter/wiki/4.-API-Reference#separator). It can be installed with [pip](https://github.com/deezer/spleeter/wiki/1.-Installation#using-pip) or be used with
 [Docker](https://github.com/deezer/spleeter/wiki/2.-Getting-started#using-docker-image).
 
 ### Projects and Softwares using **Spleeter**
@@ -37,25 +36,33 @@ That being said, many cool projects have been built on top of ours. Notably the 
 * [VirtualDJ](https://www.virtualdj.com/stems/) in their stem isolation feature
 * [Algoriddim](https://www.algoriddim.com/apps) in their **NeuralMix** and **djayPRO** app suite
 
+🆕 **Spleeter** is a baseline in the ongoing [Music Demixing Challenge](https://www.aicrowd.com/challenges/music-demixing-challenge-ismir-2021)!
+
 ## Quick start
 
 Want to try it out but don't want to install anything ? We have set up a [Google Colab](https://colab.research.google.com/github/deezer/spleeter/blob/master/spleeter.ipynb).
 
-Ready to dig into it ? In a few lines you can install **Spleeter** using [Conda](https://github.com/deezer/spleeter/wiki/1.-Installation#using-conda) and separate the vocal and accompaniment parts from an example audio file:
+Ready to dig into it ? In a few lines you can install **Spleeter**  and separate the vocal and accompaniment parts from an example audio file.
+You need first to install `ffmpeg` and `libsndfile`. It can be done on most platform using [Conda](https://github.com/deezer/spleeter/wiki/1.-Installation#using-conda):
 
 ```bash
-# install using conda
-conda config --add channels conda-forge # only needed if you don't already have this channel set
-conda install -c deezer-research spleeter 
+# install dependencies using conda
+conda install -c conda-forge ffmpeg libsndfile
+# install spleeter with pip
+pip install spleeter
 # download an example audio file (if you don't have wget, use another tool for downloading)
 wget https://github.com/deezer/spleeter/raw/master/audio_example.mp3
 # separate the example audio into two components
 spleeter separate -p spleeter:2stems -o output audio_example.mp3
 ```
 
+> :warning: Note that we no longer recommend using `conda` for installing spleeter.
+
+> ⚠️ There are known issues with Apple M1 chips, mostly due to TensorFlow compatibility. Until these are fixed, you can use [this workaround](https://github.com/deezer/spleeter/issues/607#issuecomment-828352392)
+
 You should get two separated audio files (`vocals.wav` and `accompaniment.wav`) in the `output/audio_example` folder.
 
-For a detailed documentation, please check the [repository wiki](https://github.com/deezer/spleeter/wiki)
+For a detailed documentation, please check the [repository wiki](https://github.com/deezer/spleeter/wiki/1.-Installation)
 
 ## Development and Testing
 
