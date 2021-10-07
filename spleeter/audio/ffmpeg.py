@@ -10,7 +10,9 @@
 
 import datetime as dt
 import os
+import sys
 import shutil
+from os.path import abspath
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -31,6 +33,17 @@ __email__ = "spleeter@deezer.com"
 __author__ = "Deezer Research"
 __license__ = "MIT License"
 
+try:
+    base_path = sys._MEIPASS
+except Exception:  
+    base_path = abspath(".")
+
+CMD_FFMPEG = base_path + '/ffmpeg'
+CMD_FFPROBE = base_path + '/ffprobe'
+
+if sys.platform == "win32":
+    CMD_FFMPEG += '.exe'
+    CMD_FFPROBE += '.exe'
 
 class FFMPEGProcessAudioAdapter(AudioAdapter):
     """
@@ -57,9 +70,10 @@ class FFMPEGProcessAudioAdapter(AudioAdapter):
             SpleeterError:
                 If ffmpeg or ffprobe is not found.
         """
-        for binary in ("ffmpeg", "ffprobe"):
-            if shutil.which(binary) is None:
-                raise SpleeterError("{} binary not found".format(binary))
+        # Let ffmpeg raise the error
+        #for binary in ("ffmpeg", "ffprobe"):
+        #    if shutil.which(binary) is None:
+        #        raise SpleeterError("{} binary not found".format(binary))
 
     def load(
         _,
@@ -97,8 +111,9 @@ class FFMPEGProcessAudioAdapter(AudioAdapter):
             path = str(path)
         if not isinstance(path, str):
             path = path.decode()
+                    
         try:
-            probe = ffmpeg.probe(path)
+            probe = ffmpeg.probe(path, cmd=CMD_FFPROBE)
         except ffmpeg._run.Error as e:
             raise SpleeterError(
                 "An error occurs with ffprobe (see ffprobe output below)\n\n{}".format(
@@ -118,10 +133,11 @@ class FFMPEGProcessAudioAdapter(AudioAdapter):
             output_kwargs["t"] = str(dt.timedelta(seconds=duration))
         if offset is not None:
             output_kwargs["ss"] = str(dt.timedelta(seconds=offset))
+        
         process = (
             ffmpeg.input(path)
             .output("pipe:", **output_kwargs)
-            .run_async(pipe_stdout=True, pipe_stderr=True)
+            .run_async(cmd=CMD_FFMPEG, pipe_stdout=True, pipe_stderr=True)
         )
         buffer, _ = process.communicate()
         waveform = np.frombuffer(buffer, dtype="<f4").reshape(-1, n_channels)
@@ -174,7 +190,7 @@ class FFMPEGProcessAudioAdapter(AudioAdapter):
             ffmpeg.input("pipe:", format="f32le", **input_kwargs)
             .output(path, **output_kwargs)
             .overwrite_output()
-            .run_async(pipe_stdin=True, pipe_stderr=True, quiet=True)
+            .run_async(cmd=CMD_FFMPEG, pipe_stdin=True, pipe_stderr=True, quiet=True)
         )
         try:
             process.stdin.write(data.astype("<f4").tobytes())
